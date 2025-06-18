@@ -28,7 +28,7 @@ jobs:
 
       - name: Run UI tests with pytest and generate Allure results
         run: |
-          pytest -m regression --alluredir=allure-results
+          pytest --alluredir=allure-results
 
       - name: Upload Allure results
         if: always()
