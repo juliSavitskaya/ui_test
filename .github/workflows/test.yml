@@ -21,10 +21,19 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Chrome browser
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
+      - name: Install Google Chrome (latest)
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -fy install
+          google-chrome --version
+
+      - name: Install ChromeDriver (latest)
+        run: |
+          LATEST=$(wget -q -O - https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+          wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${LATEST}/chromedriver_linux64.zip
+          unzip -o /tmp/chromedriver.zip -d /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver
+          chromedriver --version
 
       - name: Install dependencies
         run: |
