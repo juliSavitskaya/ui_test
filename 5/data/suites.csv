@@ -1,2 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"Тест успешной регистрации с валидными данными","0","Успешная регистрация пользователя","","Wed Jun 18 11:52:54 GMT 2025","broken","Wed Jun 18 11:52:54 GMT 2025","TestRegistrationForm","test_registration","",""
