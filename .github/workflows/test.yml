@@ -21,14 +21,34 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install Chrome browser
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Clear webdriver cache (optional)
+        run: |
+          rm -rf ~/.wdm || true
+
       - name: Run UI tests with pytest and generate Allure results
         run: |
-          pytest --alluredir=allure-results
+          pytest --alluredir=allure-results --tb=short -v
+        env:
+          HEADLESS: true
+          CI: true
+
+      - name: Upload test screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots
+          path: screenshots/
+          retention-days: 7
 
       - name: Upload Allure results
         if: always()
@@ -36,17 +56,16 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+          retention-days: 30
 
   publish-report:
     needs: [ run-tests ]
     runs-on: ubuntu-latest
+    if: always()
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
 
       - name: Download Allure results
         uses: actions/download-artifact@v4
@@ -54,12 +73,13 @@ jobs:
           name: allure-results
           path: allure-results
 
-      - name: Allure Report action from marketplace
+      - name: Generate Allure Report
         uses: simple-elf/allure-report-action@v1.12
         if: always()
         with:
           allure_results: allure-results
           allure_history: allure-history
+          keep_reports: 20
 
       - name: Deploy report to Github Pages
         if: always()
